@@ -1,6 +1,14 @@
 # 🎨 Component Library - Full Stack Application
 
-Una librería de componentes reutilizables construida con **Spring Boot** (backend) y **Angular 20** (frontend), utilizando **Signals**, **Factory Pattern**, y una UI moderna inspirada en **ReactBits**.
+Una librería de componentes reutilizables construida con **Spring Boot** (backend) y **Angular 20** (frontend), utilizando **Signals**, y una UI moderna. Desplegada en **Vercel** (frontend) y **Railway** (backend).
+
+**🚀 Aplicación en vivo:**
+- Frontend: https://libco-production.vercel.app
+- Backend API: https://libco-production.up.railway.app/api
+- Base de datos: Supabase PostgreSQL
+
+**📚 Documentación completa:**
+- Lee **ARCHITECTURE.md** para una guía detallada sobre cómo funciona todo el proyecto, conceptos de Angular Signals, Spring Boot, y cómo prepararse para entrevistas técnicas.
 
 ## 📁 Estructura del Proyecto (Monorepo)
 
@@ -34,6 +42,10 @@ backend (1)/
 │   │   │   │   ├── components-view/
 │   │   │   │   ├── add-component/
 │   │   │   │   └── test-connection/
+│   │   │   ├── components/          # Componentes reutilizables
+│   │   │   │   ├── floating-lines/
+│   │   │   │   ├── split-text/
+│   │   │   │   └── dynamic-components/
 │   │   │   ├── app.ts
 │   │   │   ├── app.html
 │   │   │   ├── app.routes.ts
@@ -42,10 +54,11 @@ backend (1)/
 │   │   └── index.html
 │   ├── tailwind.config.js
 │   ├── package.json
-│   ├── SIGNALS_EXPLAINED.md         # Documentación Signals
-│   └── FACTORY_PATTERN_EXPLAINED.md # Documentación Factory
+│   └── .env.production              # Variables de entorno producción
 │
-└── README.md             # Este archivo
+├── README.md                         # Este archivo
+├── ARCHITECTURE.md                   # Guía completa del proyecto
+└── .gitignore                        # Archivos ignorados por Git
 ```
 
 ---
@@ -285,20 +298,41 @@ ng test
 
 ---
 
-## 🚀 Despliegue
+## 🚀 Despliegue (En Vivo)
 
-### Backend
+### Frontend (Vercel)
 ```bash
-cd backend
-./mvnw clean package
-java -jar target/backend-0.0.1-SNAPSHOT.jar
+# Automático: cada push a main en GitHub
+# Vercel ejecuta: npm run build
+# Output: dist/frontend/browser
+# URL: https://libco-production.vercel.app
 ```
 
-### Frontend
+### Backend (Railway)
 ```bash
+# Automático: cada push a main en GitHub
+# Railway ejecuta: mvn -B clean package -DskipTests
+# Start: java -jar target/backend-0.0.1-SNAPSHOT.jar
+# URL: https://libco-production.up.railway.app/api
+```
+
+### Base de Datos (Supabase)
+```
+Host: aws-1-us-east-1.pooler.supabase.com
+Database: postgres
+Credenciales: En variables de entorno de Railway
+```
+
+**Para desplegar localmente:**
+```bash
+# Backend
+cd backend
+./mvnw spring-boot:run
+
+# Frontend (en otra terminal)
 cd frontend
-ng build --configuration production
-# Archivos en dist/frontend/browser
+npm install
+ng serve
 ```
 
 ---
