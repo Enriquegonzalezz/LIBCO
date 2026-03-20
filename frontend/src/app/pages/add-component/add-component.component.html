@@ -1,0 +1,152 @@
+<div class="add-component-container">
+  <div class="form-wrapper">
+    <!-- Header -->
+    <header class="form-header">
+      <h1 class="form-title">➕ Agregar Nuevo Componente</h1>
+      <p class="form-subtitle">Completa el formulario para agregar un componente a la biblioteca</p>
+    </header>
+
+    <!-- Success Message -->
+    @if (success()) {
+      <div class="alert success">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <strong>¡Componente creado exitosamente!</strong>
+          <p>Redirigiendo a la lista de componentes...</p>
+        </div>
+      </div>
+    }
+
+    <!-- Error Message -->
+    @if (error()) {
+      <div class="alert error">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <strong>Error</strong>
+          <p>{{ error() }}</p>
+        </div>
+      </div>
+    }
+
+    <!-- Form -->
+    <form class="component-form" (ngSubmit)="onSubmit()">
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="nombre" class="form-label">
+          Nombre del Componente *
+        </label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          [(ngModel)]="formData.nombre"
+          class="form-input"
+          placeholder="Ej: Floating Lines"
+          required
+        />
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="descripcion" class="form-label">
+          Descripción *
+        </label>
+        <textarea
+          id="descripcion"
+          name="descripcion"
+          [(ngModel)]="formData.descripcion"
+          class="form-textarea"
+          rows="3"
+          placeholder="Describe brevemente el componente..."
+          required
+        ></textarea>
+      </div>
+
+      <!-- Categoría -->
+      <div class="form-group">
+        <label for="categoria" class="form-label">
+          Categoría *
+        </label>
+        <select
+          id="categoria"
+          name="categoria"
+          [(ngModel)]="formData.categoriaId"
+          class="form-select"
+          required
+        >
+          <option value="">Selecciona una categoría</option>
+          @for (categoria of categorias(); track categoria.id) {
+            <option [value]="categoria.id">{{ categoria.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Framework -->
+      <div class="form-group">
+        <label for="framework" class="form-label">
+          Framework *
+        </label>
+        <select
+          id="framework"
+          name="framework"
+          [(ngModel)]="formData.framework"
+          class="form-select"
+          required
+        >
+          <option value="Angular">Angular</option>
+          <option value="Next.js">Next.js</option>
+          <option value="Vue">Vue</option>
+          <option value="React">React</option>
+          <option value="HTML/CSS">HTML/CSS</option>
+        </select>
+      </div>
+
+      <!-- Código de Ejemplo -->
+      <div class="form-group">
+        <label for="codigoEjemplo" class="form-label">
+          Código de Ejemplo *
+        </label>
+        <textarea
+          id="codigoEjemplo"
+          name="codigoEjemplo"
+          [(ngModel)]="formData.codigoEjemplo"
+          class="form-code"
+          rows="10"
+          placeholder="Pega aquí el código del componente..."
+          required
+        ></textarea>
+      </div>
+
+      <!-- Buttons -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancel()"
+          [disabled]="loading()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="loading()"
+        >
+          @if (loading()) {
+            <span class="spinner"></span>
+            Guardando...
+          } @else {
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Crear Componente
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

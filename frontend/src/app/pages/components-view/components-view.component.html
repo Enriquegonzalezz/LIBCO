@@ -1,0 +1,172 @@
+<div class="components-view">
+  <!-- Sidebar Toggle Button (Mobile) -->
+  <button class="sidebar-toggle" (click)="toggleSidebar()">
+    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+  </button>
+
+  <!-- Sidebar Overlay (Mobile) -->
+  @if (isSidebarOpen()) {
+    <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
+  }
+
+  <!-- Sidebar -->
+  <aside class="components-sidebar" [class.open]="isSidebarOpen()">
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">Components</h2>
+      <div class="sidebar-header-actions">
+        <button class="btn-new-component" (click)="openNewComponentModal()" title="Crear nuevo componente">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+        </button>
+        <button class="sidebar-close" (click)="toggleSidebar()">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      @if (loading()) {
+        <div class="sidebar-loading">
+          <div class="spinner"></div>
+          <p>Cargando componentes...</p>
+        </div>
+      } @else if (error()) {
+        <div class="sidebar-error">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <p>{{ error() }}</p>
+        </div>
+      } @else if (componentsByFramework().length === 0) {
+        <div class="sidebar-empty">
+          <p>No hay componentes UI disponibles</p>
+        </div>
+      } @else {
+        @for (group of componentsByFramework(); track group.framework) {
+          <div class="category-group">
+            <h3 class="category-title">
+              
+              {{ group.framework }}
+              <span class="component-count">{{ group.componentes.length }}</span>
+            </h3>
+            <ul class="component-list">
+              @for (component of group.componentes; track component.id) {
+                <li 
+                  class="component-item" 
+                  [class.active]="selectedComponent()?.id === component.id"
+                  (click)="selectComponent(component)"
+                  [title]="component.descripcion"
+                >
+                  <span class="component-dot"></span>
+                  <span class="component-name">{{ component.nombre }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      }
+    </nav>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="components-main">
+    @if (selectedComponent()) {
+      <!-- Component Header -->
+      <header class="component-header">
+        <div class="header-content">
+          <h1 class="component-title">{{ selectedComponent()?.nombre }}</h1>
+          <p class="component-description">{{ selectedComponent()?.descripcion }}</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          @if (isAngularComponent()) {
+            <button 
+              class="tab" 
+              [class.active]="activeTab() === 'preview'"
+              (click)="setActiveTab('preview')"
+            >
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+              Preview
+            </button>
+          }
+          <button 
+            class="tab" 
+            [class.active]="activeTab() === 'code'"
+            (click)="setActiveTab('code')"
+          >
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+            </svg>
+            Code
+          </button>
+        </div>
+      </header>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        @if (isAngularComponent() && activeTab() === 'preview') {
+          <!-- Preview Container (Solo Angular) -->
+          <div class="preview-container">
+            <div class="demo-container">
+              <ng-container #dynamicComponentContainer></ng-container>
+            </div>
+          </div>
+        } @else if (activeTab() === 'code' || isCodeOnlyComponent()) {
+          <!-- Code View -->
+          <div class="code-container">
+            <div class="code-header">
+              <div class="code-header-left">
+                <span class="code-framework">{{ getSelectedFramework() }}</span>
+                <span class="code-component-name">{{ selectedComponent()?.nombre }}</span>
+              </div>
+              <button class="copy-btn" (click)="copyCode(selectedComponent()?.codigoEjemplo || '')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre class="code-block"><code [innerHTML]="selectedComponent()?.codigoEjemplo"></code></pre>
+          </div>
+        }
+      </div>
+
+      <!-- Install Section -->
+      <section class="install-section">
+        <h3 class="install-title">Install</h3>
+        <div class="install-tabs">
+          <button class="install-tab active">CLI</button>
+          <button class="install-tab">Manual</button>
+        </div>
+        <div class="install-code">
+          <code>npm install @{{ selectedComponent()?.nombre?.toLowerCase() }}</code>
+          <button class="copy-btn-small">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+    } @else {
+      <!-- Empty State -->
+      <div class="empty-state">
+        <svg class="empty-icon" width="96" height="96" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <h2 class="empty-title">Select a component</h2>
+        <p class="empty-text">Choose a component from the sidebar to view its details</p>
+      </div>
+    }
+  </main>
+
+</div>

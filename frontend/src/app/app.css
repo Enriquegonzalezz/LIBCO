@@ -1,0 +1,131 @@
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: transparent !important;
+  backdrop-filter: blur(12px);
+  height: 75px;
+  border: 0;
+  border-bottom: 1px solid rgba(39, 30, 55, 0.5);
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 75px;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: white;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.navbar-links {
+  display: none;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  color: var(--dark-300);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--primary-400);
+}
+
+.btn-gradient {
+  background: linear-gradient(135deg, #5227ff 0%, #5227ff 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  border: none;
+  padding: 0.75rem 1.5rem;
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(135deg, #6337ff 0%, #7047ff 100%);
+  transform: translateY(-1px);
+}
+
+.btn-text {
+  color: white;
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Main Content */
+.main-content {
+  padding-top: 75px;
+  padding-bottom: 3rem;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  background-color: #060010;
+}
+
+/* Footer */
+.footer {
+  border-top: 1px solid var(--dark-800);
+  padding: 2rem 0;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-text {
+  color: var(--dark-400);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-link {
+  color: var(--dark-400);
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: var(--primary-400);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .navbar-links {
+    display: flex;
+  }
+}

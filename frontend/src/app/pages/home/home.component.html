@@ -1,0 +1,166 @@
+<div class="home-page">
+  <!-- Background Animado con FloatingLines -->
+  <div class="home-background">
+    <app-floating-lines
+      [linesGradient]="['#5227ff', '#8b5cf6', '#a78bfa']"
+      [enabledWaves]="['top', 'middle', 'bottom']"
+      [lineCount]="[6, 8, 6]"
+      [lineDistance]="[5, 4, 5]"
+      [animationSpeed]="0.8"
+      [interactive]="true"
+      [parallax]="true"
+      [mixBlendMode]="'screen'"
+    />
+  </div>
+
+  <!-- Contenido Principal - Texto de bienvenida y botón centrados -->
+  <div class="home-container">
+    <div class="welcome-section">
+      <h1 class="welcome-title">{{ welcomeTitle }}</h1>
+      <p class="welcome-subtitle">{{ welcomeSubtitle }}</p>
+      
+      <!-- Tech Stack -->
+      <div class="tech-stack">
+        <app-split-text 
+          [text]="'HTML CSS'" 
+          className="tech-item"
+          [delay]="30"
+          [duration]="0.8"
+          [splitType]="'chars'"
+          [fromY]="20"
+          textAlign="center"
+        />
+        <app-split-text 
+          [text]="'JavaScript'" 
+          className="tech-item"
+          [delay]="20"
+          [duration]="0.8"
+          [splitType]="'chars'"
+          [fromY]="20"
+          textAlign="center"
+        />
+      </div>
+      
+      <a routerLink="/components" class="browse-btn">
+        <span class="browse-btn-text">Browse Components</span>
+        <svg class="browse-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+<!-- Panel Lateral de Componentes (Modal) -->
+@if (showComponents()) {
+  <div class="components-modal" (click)="showComponents.set(false)">
+    <div class="components-panel" (click)="$event.stopPropagation()">
+      <!-- Header del Panel -->
+      <div class="panel-header">
+        <h2 class="panel-title">Components Library</h2>
+        <button class="close-btn" (click)="showComponents.set(false)">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Contenido del Panel: Sidebar + Preview -->
+      <div class="panel-content">
+        <aside class="categories-sidebar">
+          <nav class="categories-nav">
+            @for (categoria of categorias(); track categoria.id) {
+              <div class="category-section">
+                <h3 class="category-name">{{ categoria.nombre }}</h3>
+                <ul class="component-list">
+                  @for (component of getComponentsByCategory(categoria.nombre); track component.id) {
+                    <li class="component-item" (click)="selectComponent(component)">
+                      <span class="component-dot"></span>
+                      {{ component.nombre }}
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </nav>
+        </aside>
+
+        <!-- Panel Derecho: Preview del Componente -->
+        <div class="preview-panel">
+          <div class="demo-container">
+            <div class="demo-header">
+              <h3>Component Preview</h3>
+              <div class="demo-controls">
+                <button class="demo-control-btn">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                  </svg>
+                </button>
+                <button class="demo-control-btn">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="demo-content">
+              @if (selectedComponent()) {
+                <div class="component-preview">
+                  <h4>{{ selectedComponent()?.nombre }}</h4>
+                  <p>{{ selectedComponent()?.descripcion }}</p>
+                </div>
+              } @else {
+                <div class="demo-placeholder">
+                  <svg class="placeholder-icon" width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                  </svg>
+                  <p>Select a component to preview</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de Componentes -->
+        <div class="components-list">
+          @if (loading()) {
+            <div class="loading-container">
+              <div class="spinner"></div>
+            </div>
+          } @else if (error()) {
+            <div class="error-card">
+              <p class="error-text">{{ error() }}</p>
+            </div>
+          } @else {
+            @for (categoria of categorias(); track categoria.id) {
+              <section class="components-section">
+                <h2 class="section-title">{{ categoria.nombre }}</h2>
+                
+                <div class="components-grid">
+                  @for (component of getComponentsByCategory(categoria.nombre); track component.id) {
+                    <article class="component-card" (click)="selectComponent(component)">
+                      <div class="component-header">
+                        <h3 class="component-name">{{ component.nombre }}</h3>
+                        <span class="component-badge">{{ component.categoria.nombre }}</span>
+                      </div>
+                      
+                      <p class="component-description">{{ component.descripcion }}</p>
+                    </article>
+                  }
+                </div>
+              </section>
+            }
+          }
+
+          @if (!loading() && !error() && components().length === 0) {
+            <div class="empty-state">
+              <div class="empty-icon">📦</div>
+              <h3 class="empty-title">No components yet</h3>
+              <p class="empty-text">Start by creating your first component</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
+</div>
